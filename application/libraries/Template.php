@@ -6,11 +6,6 @@ class Template {
     function __construct() 
     {
         $this->_ci = &get_instance();
-        if ($this->_ci->session->userdata('setting') == null) {
-		    $get_setting = getSetting();
-            // dd($get_setting);
-		    $this->_ci->session->set_userdata('setting',$get_setting);
-		}
     }
 
 

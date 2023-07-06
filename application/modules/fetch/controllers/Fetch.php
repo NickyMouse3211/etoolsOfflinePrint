@@ -91,10 +91,10 @@ class Fetch extends MX_Controller {
 
         /* Footer */
         $printer->feed(2);
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
         if($data->get_store->cct_member_token_code != ''){
             $printer->text(langText('petugas_kasir').' :'.$data->get_store->cashier_name."\n");
         }
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text(langText('terimakasih_telah_berbelanja_di_toko_kami')."\n");
         $printer->feed(2);
 
