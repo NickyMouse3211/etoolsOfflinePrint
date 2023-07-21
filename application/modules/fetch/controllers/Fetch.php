@@ -119,12 +119,61 @@ class Fetch extends MX_Controller {
         $printer->cut();
         sleep(2);
 
-    /* Pulse */
-    $printer->pulse();
+        /* Pulse */
+        $printer->pulse();
 
-    /* Always close the printer! On some PrintConnectors, no actual
-    * data is sent until the printer is closed. */
-    $printer->close();
+        /* Always close the printer! On some PrintConnectors, no actual
+        * data is sent until the printer is closed. */
+        $printer->close();
+
+        $datas['status'] 	= staticValue('status_request','success');
+	    $datas['message']	= langText('struk_telah_dicetak');
+        echo json_encode($datas);
+    }
+
+    public function printCode(){
+        
+        $input              = $this->input->post();
+        
+        // dd($data);
+        $device_name = $input['deviceName'];
+
+        $connector = new Escpos\PrintConnectors\WindowsPrintConnector('smb://'. $_SERVER['REMOTE_ADDR'] .'/'.$device_name);
+
+        $printer = new Escpos\Printer($connector);
+        /* Initialize */
+        $printer->initialize();
+        $times = (int)$input['times'];
+        for ($i=0; $i < $times; $i++) { 
+            if($input['codeType'] == 'qr'){
+                // Demo that alignment QRcode is the same as text
+                $printer2 = new Printer($connector); // dirty printer profile hack !!
+                $printer2->setJustification(Printer::JUSTIFY_CENTER);
+                $printer2->qrCode($input['text'], Printer::QR_ECLEVEL_M, 8);
+                $printer->feed();
+                $printer2->text($input['text']);
+                $printer2->setJustification();
+                $printer2->feed();
+            }else{
+                $printer2 = new Printer($connector); // dirty printer profile hack !!
+                $printer2->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->barcode($input['text'], Printer::BARCODE_CODE39);
+                $printer->feed();
+                $printer2->text($input['text']);
+                $printer2->setJustification();
+                $printer2->feed();
+            }
+            $printer->cut();
+        }
+        
+        sleep(2);
+
+        /* Pulse */
+        $printer->pulse();
+
+        /* Always close the printer! On some PrintConnectors, no actual
+        * data is sent until the printer is closed. */
+        $printer->close();
 
         $datas['status'] 	= staticValue('status_request','success');
 	    $datas['message']	= langText('struk_telah_dicetak');
