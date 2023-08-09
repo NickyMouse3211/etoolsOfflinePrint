@@ -14,8 +14,9 @@ class Fetch extends MX_Controller {
         $data               = json_decode($input['data']);
         // dd($data);
         $device_name = $data->device_name;
-
-        $connector = new Escpos\PrintConnectors\WindowsPrintConnector('smb://'. $_SERVER['REMOTE_ADDR'] .'/'.$device_name);
+        $ip_address = getLocalIP();
+        // dd($ip_address);
+        $connector = new Escpos\PrintConnectors\WindowsPrintConnector('smb://'. $ip_address .'/'.$device_name);
 
         $printer = new Escpos\Printer($connector);
         /* Initialize */
@@ -92,29 +93,29 @@ class Fetch extends MX_Controller {
         /* Footer */
         $printer->feed(2);
         $printer->setJustification(Printer::JUSTIFY_CENTER);
-        if($data->get_store->cct_member_token_code != ''){
-            $printer->text(langText('petugas_kasir').' :'.$data->get_store->cashier_name."\n");
-        }
         $printer->text(langText('terimakasih_telah_berbelanja_di_toko_kami')."\n");
+        if($data->get_store->cct_member_token_code != ''){
+            $printer->text(langText('anggota').' :'.$data->get_store->member_name."\n");
+        }
         $printer->feed(2);
 
         // $printer->barcode('asd', Printer::BARCODE_CODE39);
-        if($data->get_store->cct_member_token_code != ''){
+        // if($data->get_store->cct_member_token_code != ''){
             // Demo that alignment QRcode is the same as text
-            $printer2 = new Printer($connector); // dirty printer profile hack !!
-            $printer2->setJustification(Printer::JUSTIFY_CENTER);
-            $printer2->qrCode($wildCardLink.$data->get_store->token_member, Printer::QR_ECLEVEL_M, 8);
-            $printer2->text(langText('anggota').' :'.$data->get_store->member_name."\n");
-            $printer2->setJustification();
-            $printer2->feed();
-        }else{
+            // $printer2 = new Printer($connector); // dirty printer profile hack !!
+            // $printer2->setJustification(Printer::JUSTIFY_CENTER);
+            // $printer2->qrCode($wildCardLink.$data->get_store->token_member, Printer::QR_ECLEVEL_M, 8);
+            // $printer2->text(langText('anggota').' :'.$data->get_store->member_name."\n");
+            // $printer2->setJustification();
+            // $printer2->feed();
+        // }else{
             $printer2 = new Printer($connector); // dirty printer profile hack !!
             $printer2->setJustification(Printer::JUSTIFY_CENTER);
             $printer2->qrCode($wildCardLink.$data->get_store->token_cashier, Printer::QR_ECLEVEL_M, 8);
             $printer2->text(langText('petugas_kasir').' :'.$data->get_store->cashier_name."\n");
             $printer2->setJustification();
             $printer2->feed();
-        }
+        // }
         
         $printer->cut();
         sleep(2);
@@ -137,8 +138,8 @@ class Fetch extends MX_Controller {
         
         // dd($data);
         $device_name = $input['deviceName'];
-
-        $connector = new Escpos\PrintConnectors\WindowsPrintConnector('smb://'. $_SERVER['REMOTE_ADDR'] .'/'.$device_name);
+        $ip_address = getLocalIP();
+        $connector = new Escpos\PrintConnectors\WindowsPrintConnector('smb://'. $ip_address .'/'.$device_name);
 
         $printer = new Escpos\Printer($connector);
         /* Initialize */

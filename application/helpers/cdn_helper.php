@@ -61,4 +61,19 @@
 		$pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
 		return (bool) preg_match("/^{$pattern}$/i", $subject);
 	}
+
+	function getLocalIP(){
+		$ip_address  = '127.0.0.1';
+        if(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+        }
+
+		if($ip_address == '::1'){
+			$ip_address = 'localhost';
+		}
+
+		return $ip_address;
+	}
 ?>
